@@ -1,0 +1,22 @@
+{
+  "name": "ninja-bank",
+  "version": "1.0.0",
+  "description": "a simple implementation of a banking system",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ninjacoder88/event-sourcing.git"
+  },
+  "author": "Ninja Software Consulting",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ninjacoder88/event-sourcing/issues"
+  },
+  "homepage": "https://github.com/ninjacoder88/event-sourcing#readme",
+  "dependencies": {
+    "express": "^4.18.0"
+  }
+}
