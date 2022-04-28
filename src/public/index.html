@@ -7,44 +7,56 @@
         <!--<link rel="icon" href="favicon.png" />-->
         <link rel="stylesheet" type="text/css" href="css/lib/bootstrap-5.1.3.min.css"/>
         <link rel="stylesheet" type="text/css" href="css/site.css"/>
+        <link rel="shortcut icon" href="favicon.png" />
     </head>
-    <body class="h-100">
+    <body class="h-100" id="application">
         <div class="container-fluid mt-3">
-            <h1 class="text-white">Ninja Bank</h1>
+            <h1 class="text-white">Ninja Bank Admin</h1>
 
             <div class="row">
                 <div class="col-md-4">
-                    <h3 class="text-white">Transaction Log</h3>
-                    <table class="table-dark">
-                        <thead>
-                            <tr>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody data-bind="foreach: transactions">
-                            <tr>
-                                <td></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="col-md-4">
-                    <h3 class="text-white">Accounts</h3>
-                    <div data-bind="foreach: accounts">
-                        <div class="card bg-secondary text-white">
-                            
+                    <h3 class="text-white">Customers</h3>
+                    <div class="d-grid gap-2 mb-3">
+                        <button type="button" class="btn btn-primary" data-bind="click: createCustomer">Create Customer</button>
+                    </div>
+                    
+                    <div data-bind="foreach: customers">
+                        <div class="card text-white bg-secondary mb-3">
+                            <div class="card-header"><span data-bind="text: customerName"></span></div>
+                            <div class="card-body">
+                                <div class="d-grip gap-2 mb-3">
+                                    <button type="button" class="btn btn-primary" data-bind="click: createAccount">Create Account</button>
+                                </div>
+                                
+                                <ul class="list-group" data-bind="foreach: accounts">
+                                    <li class="list-group-item"><span data-bind="text: accountName"></span> <span class="float-end" data-bind="text: accountBalance"></span></li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
+                </div>
+                <div class="col-md-4">
+                    <h3 class="text-white">Transaction Log</h3>
+                    <div class="d-grid gap-2 mb-3">
+                        <button type="button" class="btn btn-warning" data-bind="click: createTransaction">Generate Transaction</button>
+                    </div>
+
+                    <ul class="list-group" data-bind="foreach: transactions">
+                        <li class="list-group-item"> <span data-bind="text: sourceAccountId"></span> -> <span data-bind="text: transactionAmount"></span> -> <span data-bind="text: destinationAccountId"></span> </li>
+                    </ul>
                 </div>
                 <div class="col-md-4">
                     <h3 class="text-white">Actions</h3>
                     <button type="button" class="btn btn-info">Reconcile</button>
                     <button type="button" class="btn btn-warning">Rewind</button>
+                    
                 </div>
             </div>
         </div>
        
         <script type="text/javascript" src="js/lib/jquery-3.6.0.min.js"></script>
         <script type="text/javascript" src="js/lib/bootstrap.bundle-5.1.3.min.js"></script>
+        <script type="text/javascript" src="js/lib/knockout-min.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
     </body>
 </html>
