@@ -1,6 +1,8 @@
 const express = require("express");
 const { MongoClient, ObjectID } = require("mongodb");
 const bodyParser = require("body-parser");
+const { Processor } = require("./processor");
+const { Loader } = require("./loader");
 
 const app = express();
 const port = 80;
@@ -16,16 +18,10 @@ function getCustomerName(){
 }
 
 app.get("/customers", (req, res) => {
-    const client = getMongoClient();
-    const database = client.db("NinjaBank");
-    const customersCollection = database.collection("Customers");
-
-    client.connect()
-        .then(() => {
-            const cursor = customersCollection.find({});
-            return cursor.toArray();
-        }).then(documents => {
-            res.send(documents);
+    new Loader()
+        .loadCustomersAsync()
+        .then(customers => {
+            res.send(customers);
         }).catch(error => {
             console.log(error);
             res.sendStatus(500);
@@ -33,14 +29,11 @@ app.get("/customers", (req, res) => {
 });
 
 app.post("/customers", (req, res) => {
-    const client = getMongoClient();
-    const database = client.db("NinjaBank");
-    const customersCollection = database.collection("Customers");
     const customerName = getCustomerName();
-    client.connect()
-        .then(() => {        
-            return customersCollection.insertOne({customerName: customerName, accounts: []});
-        }).then(insertResult => {
+
+    new Processor()
+        .createCustomerAsync()
+        .then(insertResult => {
             res.send({_id: insertResult.insertedId, customerName: customerName});
         }).catch(error => {
             console.log(error);
@@ -49,22 +42,11 @@ app.post("/customers", (req, res) => {
 });
 
 app.post("/accounts", bodyParser.json(), (req, res) => {
-    const client = getMongoClient();
-    const database = client.db("NinjaBank");
-    const customersCollection = database.collection("Customers");
-    const accountsCollection = database.collection("Accounts");
-    console.log(req.body);
-
-    let partialAccount = {accountName: "Checking", customerId: req.body.customerId};
-    client.connect()
-        .then(() => {
-            partialAccount.accountBalance = (Math.random() * 1000).toFixed(2);
-            return accountsCollection.insertOne(partialAccount);
-        }).then(insertResult => {
+    let partialAccount = {accountName: "Checking", customerId: req.body.customerId, accountBalance: (Math.random() * 1000).toFixed(2)};
+    new Processor()
+        .createAccountAsync(partialAccount.customerId, partialAccount.accountName, partialAccount.accountBalance)
+        .then(insertResult => {
             partialAccount._id = insertResult.insertedId;
-            partialAccount.transactions = [];
-            return customersCollection.updateOne({"_id": new ObjectID(req.body.customerId)}, {$push: {"accounts": partialAccount}});
-        }).then(() => {
             res.send(partialAccount);
         }).catch(error => {
             console.log(error);
@@ -90,6 +72,10 @@ app.get("/transactions", (req, res) => {
 });
 
 app.post("/transactions", (req, res) => {
+
+
+    //new Processor().createTransactionAsync(req.body.sourceAccountId);
+
     const client = getMongoClient();
     const database = client.db("NinjaBank");
     const accountsCollection = database.collection("Accounts");
